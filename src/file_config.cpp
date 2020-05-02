@@ -63,17 +63,24 @@ void file_config::reload()
 	buf.resize(size_buf);
 
 	map_tmp_.clear();
+	bool flag_checksum = (checksum_.size() == 0);
 	while(fgets(&buf[0], size_buf, f) != NULL){
 		auto ss = Util::split(Util::trim(string(&buf[0])), delimiter_);
 		if(ss.size() >= 2){
+			if(!flag_checksum){
+				if(ss[0] == checksum_){
+					flag_checksum = true;
+					continue;
+				}
+			}
 			map_tmp_[ss[0]] = ss[1];
-			cout << ss[0] << delimiter_ << ss[1] << endl;
+			//cout << ss[0] << delimiter_ << ss[1] << endl;
 		}
 	}
-	cout << endl;
+	//cout << endl;
 	fclose(f);
 
-	{
+	if(flag_checksum){
 		std::lock_guard<std::mutex> lock(mtx_);
 		map_ = map_tmp_;
 	}
@@ -95,4 +102,9 @@ void file_config::set_reload_event()
 			reload();
 			set_reload_event();
 			});
+}
+
+void file_config::set_file_checksum(const char* checksum)
+{
+	checksum_ = string(checksum);
 }

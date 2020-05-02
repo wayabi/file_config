@@ -15,7 +15,8 @@ int main(int argc, char** argv){
 	boost::asio::io_service::work work_(ios_);
 
 	file_config fc("./config", ',');
-	fc.set_reload_interval(100);
+	fc.set_file_checksum("_checksum_");
+	fc.set_reload_interval(1);
 	fc.start_reload_loop(&ios_);
 
 	boost::thread_group tg;

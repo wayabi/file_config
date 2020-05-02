@@ -22,6 +22,7 @@ public:
 	void reload();
 	void start_reload_loop(boost::asio::io_service* ios);
 	void set_reload_interval(int millisec);
+	void set_file_checksum(const char* checksum);
 
 private:
 	void set_reload_event();
@@ -35,6 +36,7 @@ private:
 	std::mutex mtx_;
 	boost::asio::io_service* ios_;
 	std::shared_ptr<boost::asio::deadline_timer> timer_loop_;
+	std::string checksum_;
 };
 
 #endif
